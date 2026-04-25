@@ -476,8 +476,9 @@ let state = {
   allLogs: [],
   selectedUsers: [],
   selectedActions: null, // null = tous
-  sheetUrl: 'https://script.google.com/macros/s/AKfycbw_5-7mo5DZ6TD2lqivJzEe4tvdCC8_YWtfRrbHj4oGXSmilR54x6nesT0C1fJ35NTz/exec',
-  savedData: [], // données chargées depuis Sheet
+  supabaseUrl: 'https://xhdjbznyvcdypogiwize.supabase.co/rest/v1',
+  supabaseKey: 'sb_publishable_F3DemETqUzOIEpJcpC6Rig_6q0H7ZGI',
+  savedData: [], // données chargées depuis Supabase
 };
  
 // ==================== INIT ====================
@@ -1045,15 +1046,25 @@ function drawLegend(userNames) {
   });
 }
  
-// ==================== GOOGLE SHEET ====================
+// ==================== SUPABASE ====================
+ 
+function sbHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    'apikey': state.supabaseKey,
+    'Authorization': 'Bearer ' + state.supabaseKey,
+    'Prefer': 'return=minimal',
+  };
+}
  
 async function getLastSavedDate() {
   try {
-    const resp = await fetch(state.sheetUrl);
+    const resp = await fetch(state.supabaseUrl + '/scans?select=date&order=date.desc&limit=1', {
+      headers: sbHeaders()
+    });
     const rows = await resp.json();
     if (!rows || rows.length === 0) return null;
-    const dates = rows.map(r => r.date).filter(Boolean).sort();
-    return dates[dates.length - 1];
+    return rows[0].date;
   } catch(e) { return null; }
 }
  
@@ -1071,19 +1082,19 @@ async function majSheet() {
     startDate = startInput;
     endDate = endInput;
   } else {
-    toast('Recherche de la dernière date sauvegardée...', false);
+    toast('Recherche de la dernière date sauvegardée...');
     const lastDate = await getLastSavedDate();
     if (lastDate) {
       const next = new Date(lastDate);
       next.setDate(next.getDate() + 1);
       startDate = fmt(next);
     } else {
-      toast('Aucune donnée dans le Sheet — sélectionne une période', true);
+      toast('Aucune donnée — sélectionne une période', true);
       return;
     }
   }
  
-  if (startDate > endDate) { toast('Données déjà à jour !', false); return; }
+  if (startDate > endDate) { toast('Données déjà à jour !'); return; }
  
   toast('Récupération des données...');
   const days = getDaysInRange(startDate, endDate);
@@ -1118,29 +1129,46 @@ async function majSheet() {
  
   const rows = Object.entries(agg).map(([key, count]) => {
     const [user, date, action] = key.split('||');
-    return { user, date, action, count };
+    return { user, date, action, count: Number(count) };
   });
  
   if (rows.length === 0) { toast('Aucune donnée à envoyer', true); return; }
  
-  toast('Envoi vers Google Sheets...');
+  toast('Envoi vers Supabase...');
   try {
-    await fetch(state.sheetUrl, {
+    // Delete existing rows for these dates first (upsert par date)
+    const datesStr = [...new Set(rows.map(r => r.date))].map(d => `"${d}"`).join(',');
+    await fetch(state.supabaseUrl + `/scans?date=in.(${datesStr})`, {
+      method: 'DELETE',
+      headers: sbHeaders(),
+    });
+ 
+    // Insert new rows
+    const resp = await fetch(state.supabaseUrl + '/scans', {
       method: 'POST',
+      headers: { ...sbHeaders(), 'Prefer': 'return=minimal' },
       body: JSON.stringify(rows),
     });
-    toast(`✓ ${rows.length} lignes envoyées dans le Sheet !`);
+ 
+    if (resp.ok || resp.status === 201) {
+      toast(`✓ ${rows.length} lignes sauvegardées dans Supabase !`);
+    } else {
+      const err = await resp.text();
+      toast('Erreur Supabase : ' + err, true);
+    }
   } catch(e) {
-    toast('Erreur envoi Sheet : ' + e.message, true);
+    toast('Erreur envoi : ' + e.message, true);
   }
 }
  
 async function chargerSheet() {
-  toast('Chargement depuis Google Sheets...');
+  toast('Chargement depuis Supabase...');
   try {
-    const resp = await fetch(state.sheetUrl);
+    const resp = await fetch(state.supabaseUrl + '/scans?select=*&order=date.asc&limit=10000', {
+      headers: sbHeaders()
+    });
     const rows = await resp.json();
-    if (!rows || rows.length === 0) { toast('Aucune donnée dans le Sheet', true); return; }
+    if (!rows || rows.length === 0) { toast('Aucune donnée dans Supabase', true); return; }
     state.savedData = rows;
     renderSheetStats(rows);
     toast(`✓ ${rows.length} lignes chargées`);
