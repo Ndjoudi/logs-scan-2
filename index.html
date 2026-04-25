@@ -24,7 +24,7 @@
     min-height: 100vh;
     padding: 0;
   }
-
+ 
   /* HEADER */
   header {
     padding: 24px 32px;
@@ -64,7 +64,7 @@
   .btn.primary:hover { background: #005566; color: #fff; }
   .btn.danger { border-color: var(--danger); color: var(--danger); }
   .btn.danger:hover { background: var(--danger); color: #fff; }
-
+ 
   /* TABS */
   .tabs {
     display: flex;
@@ -85,11 +85,11 @@
   }
   .tab:hover { color: var(--text); }
   .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-
+ 
   /* PANELS */
   .panel { display: none; padding: 16px 24px; }
   .panel.active { display: block; }
-
+ 
   /* CONFIG PANEL */
   .config-section {
     background: var(--surface);
@@ -127,7 +127,7 @@
     transition: border-color 0.15s;
   }
   .form-group input:focus { border-color: var(--accent); }
-
+ 
   /* USERS LIST */
   .users-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
   .user-item {
@@ -171,7 +171,7 @@
   }
   .icon-btn:hover { border-color: var(--danger); color: var(--danger); }
   .icon-btn.edit:hover { border-color: var(--text); color: var(--text); }
-
+ 
   /* STATS PANEL */
   .controls-bar {
     background: var(--surface);
@@ -199,7 +199,7 @@
   .chip.active { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 500; }
   .chip.all { border-color: var(--accent); color: var(--accent); }
   .chip.all.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-
+ 
   /* STATS GRID */
   .kpi-grid {
     display: grid;
@@ -218,7 +218,7 @@
   .kpi-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
   .kpi-value { font-family: 'IBM Plex Sans', sans-serif; font-size: 22px; font-weight: 700; color: var(--accent); }
   .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
-
+ 
   /* TABLES */
   .table-card {
     background: var(--surface);
@@ -284,7 +284,7 @@
   .tag.rezoner { background: #e3eceb; color: #006c7c; border: 1px solid #006c7c; }
   .tag.stock { background: #e3eceb; color: #006c7c; border: 1px solid #006c7c; }
   .tag.other { background: #f0f0f0; color: #666; border: 1px solid #ccc; }
-
+ 
   /* LOADING */
   .loading {
     display: none;
@@ -302,7 +302,7 @@
     margin: 0 auto 16px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-
+ 
   .empty-state {
     text-align: center;
     padding: 60px;
@@ -310,7 +310,7 @@
     font-size: 13px;
   }
   .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
-
+ 
   /* TOAST */
   .toast {
     position: fixed;
@@ -329,7 +329,7 @@
   }
   .toast.show { transform: translateY(0); opacity: 1; }
   .toast.error { border-color: var(--danger); color: var(--danger); }
-
+ 
   /* PROGRESS */
   .progress-bar {
     display: none;
@@ -346,7 +346,7 @@
     border-radius: 2px;
     transition: width 0.3s;
   }
-
+ 
   .section-label {
     font-size: 10px;
     color: var(--muted);
@@ -355,7 +355,7 @@
     margin-bottom: 8px;
     margin-top: 12px;
   }
-
+ 
   input[type="date"]::-webkit-calendar-picker-indicator {
     filter: invert(0.3) sepia(1) hue-rotate(150deg);
   }
@@ -366,18 +366,18 @@
   <button class="btn" onclick="showTab('stats')" id="tab-stats" style="margin-right:6px;">Statistiques</button>
   <button class="btn" onclick="showTab('config')" id="tab-config">⚙ Config</button>
 </div>
-
-
+ 
+ 
 <!-- STATS PANEL -->
 <div class="panel active" id="panel-stats">
-
+ 
   <div class="table-card" id="chart-card" style="margin-bottom:12px;display:none;">
     <div style="padding: 16px 20px 10px; display:flex; align-items:flex-start; gap:16px;">
       <canvas id="chart-jours-top" height="160" style="flex:1;min-width:0;"></canvas>
       <canvas id="chart-legend" style="flex-shrink:0;align-self:center;"></canvas>
     </div>
   </div>
-
+ 
   <div class="controls-bar">
     <div class="form-group">
       <label>Date début</label>
@@ -394,31 +394,31 @@
     <div style="flex:1"></div>
     <div id="fetch-info" style="font-size:11px;color:var(--muted);text-align:right;"></div>
   </div>
-
+ 
   <div class="section-label">Filtrer par utilisateur</div>
   <div class="user-chips" id="user-chips"></div>
-
+ 
   <div class="section-label">Filtrer par type de scan</div>
   <div class="user-chips" id="action-chips"></div>
-
+ 
   <div class="progress-bar" id="progress-bar">
     <div class="progress-fill" id="progress-fill" style="width:0%"></div>
   </div>
-
+ 
   <div class="loading" id="loading">
     <div class="spinner"></div>
     <div id="loading-text">Chargement...</div>
   </div>
-
+ 
   <div id="stats-content">
     
   </div>
-
+ 
 </div>
-
+ 
 <!-- CONFIG PANEL -->
 <div class="panel" id="panel-config">
-
+ 
   <div class="config-section">
     <h2>🔑 Authentification</h2>
     <div class="form-row">
@@ -441,12 +441,12 @@
       </div>
     </div>
   </div>
-
+ 
   <div class="config-section">
     <h2>👥 Utilisateurs</h2>
-
+ 
     <div class="users-list" id="users-list"></div>
-
+ 
     <div class="form-row" id="user-form">
       <div class="form-group">
         <label>Nom affiché</label>
@@ -461,11 +461,11 @@
       </div>
     </div>
   </div>
-
+ 
 </div>
-
+ 
 <div class="toast" id="toast"></div>
-
+ 
 <script>
 // ==================== STATE ====================
 let state = {
@@ -476,10 +476,10 @@ let state = {
   allLogs: [],
   selectedUsers: [],
   selectedActions: null, // null = tous
-  sheetUrl: 'https://script.google.com/macros/s/AKfycbxo0s_oqOoebbNd3yDeWt5L_PG1VO1oL5eZOoprCiy3NwSgh-e5WoRJRJQGi7QvhBA/exec',
+  sheetUrl: 'https://script.google.com/macros/s/AKfycbw_5-7mo5DZ6TD2lqivJzEe4tvdCC8_YWtfRrbHj4oGXSmilR54x6nesT0C1fJ35NTz/exec',
   savedData: [], // données chargées depuis Sheet
 };
-
+ 
 // ==================== INIT ====================
 function init() {
   const saved = localStorage.getItem('pda_config');
@@ -490,23 +490,23 @@ function init() {
     state.bypassToken = cfg.bypassToken || '';
     state.centerId = cfg.centerId || '9';
   }
-
+ 
   // Default dates: last 7 days
   const today = new Date();
   const week = new Date(today);
   week.setDate(week.getDate() - 6);
   document.getElementById('date-end').value = fmt(today);
   document.getElementById('date-start').value = fmt(week);
-
+ 
   renderConfig();
   renderChips();
   updateStatus();
 }
-
+ 
 function fmt(d) {
   return d.toISOString().split('T')[0];
 }
-
+ 
 function updateStatus() {
   const el = document.getElementById('status-dot');
   if (!el) return;
@@ -516,7 +516,7 @@ function updateStatus() {
     el.textContent = '● non configuré';
   }
 }
-
+ 
 // ==================== TABS ====================
 function showTab(name) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
@@ -526,7 +526,7 @@ function showTab(name) {
   document.getElementById('tab-config').style.borderColor = name === 'config' ? 'var(--accent)' : '';
   document.getElementById('tab-config').style.color = name === 'config' ? 'var(--accent)' : '';
 }
-
+ 
 // ==================== CONFIG ====================
 function saveConfig() {
   state.authToken = document.getElementById('auth-token').value.trim();
@@ -541,14 +541,14 @@ function saveConfig() {
   updateStatus();
   toast('Configuration sauvegardée ✓');
 }
-
+ 
 function renderConfig() {
   document.getElementById('auth-token').value = state.authToken;
   document.getElementById('bypass-token').value = state.bypassToken;
   document.getElementById('center-id').value = state.centerId;
   renderUsersList();
 }
-
+ 
 function renderUsersList() {
   const el = document.getElementById('users-list');
   if (state.users.length === 0) {
@@ -568,11 +568,11 @@ function renderUsersList() {
     </div>
   `).join('');
 }
-
+ 
 function initials(name) {
   return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
 }
-
+ 
 function addUser() {
   const name = document.getElementById('new-user-name').value.trim();
   const email = document.getElementById('new-user-email').value.trim();
@@ -585,20 +585,20 @@ function addUser() {
   renderChips();
   toast('Utilisateur ajouté ✓');
 }
-
+ 
 function removeUser(i) {
   state.users.splice(i, 1);
   saveUsers();
   renderUsersList();
   renderChips();
 }
-
+ 
 function saveUsers() {
   const cfg = JSON.parse(localStorage.getItem('pda_config') || '{}');
   cfg.users = state.users;
   localStorage.setItem('pda_config', JSON.stringify(cfg));
 }
-
+ 
 // ==================== CHIPS ====================
 function renderChips() {
   const el = document.getElementById('user-chips');
@@ -613,14 +613,14 @@ function renderChips() {
   el.innerHTML = html;
   state.selectedUsers = [...state.users];
 }
-
+ 
 function toggleAll(el) {
   document.querySelectorAll('#user-chips .chip').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
   state.selectedUsers = [...state.users];
   if (state.allLogs.length) rerender();
 }
-
+ 
 function toggleChip(el, idx) {
   document.querySelector('#user-chips .chip.all')?.classList.remove('active');
   el.classList.toggle('active');
@@ -635,7 +635,7 @@ function toggleChip(el, idx) {
   }
   if (state.allLogs.length) rerender();
 }
-
+ 
 // ==================== FETCH LOGS ====================
 async function fetchDayLogs(user, day) {
   const url = `https://api.labellevie.com/1.0/api/products/logs-pda?center_id=${state.centerId}&day=${day}&user=${encodeURIComponent(user.email)}`;
@@ -650,7 +650,7 @@ async function fetchDayLogs(user, day) {
   }
   return [];
 }
-
+ 
 function getDaysInRange(start, end) {
   const days = [];
   const cur = new Date(start);
@@ -661,7 +661,7 @@ function getDaysInRange(start, end) {
   }
   return days;
 }
-
+ 
 async function loadStats() {
   if (!state.authToken) {
     toast('Configure d\'abord le token dans Config', true);
@@ -672,23 +672,23 @@ async function loadStats() {
     toast('Aucun utilisateur sélectionné', true);
     return;
   }
-
+ 
   const start = document.getElementById('date-start').value;
   const end = document.getElementById('date-end').value;
   if (!start || !end) { toast('Sélectionne une période', true); return; }
-
+ 
   const days = getDaysInRange(start, end);
   const totalRequests = days.length * state.selectedUsers.length;
-
+ 
   document.getElementById('loading').classList.add('active');
   document.getElementById('stats-content').innerHTML = '';
   document.getElementById('progress-bar').classList.add('active');
   document.getElementById('progress-fill').style.width = '0%';
   document.getElementById('fetch-info').textContent = '';
-
+ 
   let allLogs = [];
   let done = 0;
-
+ 
   for (const user of state.selectedUsers) {
     for (const day of days) {
       try {
@@ -704,17 +704,17 @@ async function loadStats() {
       document.getElementById('loading-text').textContent = `Chargement... ${done}/${totalRequests} requêtes`;
     }
   }
-
+ 
   document.getElementById('loading').classList.remove('active');
   document.getElementById('progress-bar').classList.remove('active');
   document.getElementById('fetch-info').textContent = `${allLogs.length} entrées · ${totalRequests} requêtes`;
-
+ 
   state.allLogs = allLogs;
   state.selectedActions = null;
   renderActionChips(allLogs);
   renderStats(getFilteredLogs(), start, end);
 }
-
+ 
 const actionMap = {
   'updated':      { label: 'rezoné',       cls: 'rezoner' },
   'update':       { label: 'rezoner',       cls: 'rezoner' },
@@ -722,7 +722,7 @@ const actionMap = {
   'alterstock':   { label: 'stock visuel',  cls: 'stock' },
   'replacer':     { label: 'replacer',      cls: 'replacer' },
 };
-
+ 
 // ==================== FILTERS ====================
 function getFilteredLogs() {
   let logs = state.allLogs;
@@ -737,7 +737,7 @@ function getFilteredLogs() {
   }
   return logs;
 }
-
+ 
 const ACTION_LABEL_MAP = {
   'updated':      'rezoné',
   'update':       'rezoner',
@@ -745,7 +745,7 @@ const ACTION_LABEL_MAP = {
   'alterstock':   'stock visuel',
   'replacer':     'replacer',
 };
-
+ 
 function renderActionChips(logs) {
   const el = document.getElementById('action-chips');
   if (!el) return;
@@ -757,14 +757,14 @@ function renderActionChips(logs) {
   }).join('');
   el.innerHTML = html;
 }
-
+ 
 function toggleAllActions(el) {
   document.querySelectorAll('#action-chips .chip').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
   state.selectedActions = null;
   rerender();
 }
-
+ 
 function toggleActionChip(el) {
   document.querySelector('#action-chips .chip.all')?.classList.remove('active');
   el.classList.toggle('active');
@@ -775,13 +775,13 @@ function toggleActionChip(el) {
   }
   rerender();
 }
-
+ 
 function rerender() {
   const start = document.getElementById('date-start').value;
   const end = document.getElementById('date-end').value;
   renderStats(getFilteredLogs(), start, end);
 }
-
+ 
 // ==================== RENDER STATS ====================
 function renderStats(logs, start, end) {
   if (logs.length === 0) {
@@ -792,13 +792,13 @@ function renderStats(logs, start, end) {
       </div>`;
     return;
   }
-
+ 
   // KPIs
   const totalScans = logs.length;
   const uniqueProducts = new Set(logs.map(l => l.product_id)).size;
   const uniqueUsers = new Set(logs.map(l => l.user)).size;
   const uniqueDays = new Set(logs.map(l => l.date?.split('T')[0])).size;
-
+ 
   // Par utilisateur
   const byUser = {};
   logs.forEach(l => {
@@ -806,14 +806,14 @@ function renderStats(logs, start, end) {
     byUser[k] = (byUser[k] || 0) + 1;
   });
   const maxUser = Math.max(...Object.values(byUser));
-
+ 
   // Par action
   const byAction = {};
   logs.forEach(l => {
     const a = l.action || 'inconnu';
     byAction[a] = (byAction[a] || 0) + 1;
   });
-
+ 
   // Par jour
   const byDay = {};
   logs.forEach(l => {
@@ -822,7 +822,7 @@ function renderStats(logs, start, end) {
   });
   const sortedDays = Object.entries(byDay).sort((a,b) => a[0].localeCompare(b[0]));
   const maxDay = Math.max(...Object.values(byDay));
-
+ 
   // Par produit
   const byProduct = {};
   logs.forEach(l => {
@@ -831,9 +831,9 @@ function renderStats(logs, start, end) {
   });
   const topProducts = Object.entries(byProduct).sort((a,b) => b[1]-a[1]).slice(0, 15);
   const maxProd = topProducts[0]?.[1] || 1;
-
+ 
   // actionMap and actionTag defined globally
-
+ 
   document.getElementById('stats-content').innerHTML = `
     <div class="kpi-grid">
       <div class="kpi-card">
@@ -857,7 +857,7 @@ function renderStats(logs, start, end) {
         <div class="kpi-sub">scans par jour actif</div>
       </div>
     </div>
-
+ 
     <!-- Par utilisateur -->
     <div class="table-card">
       <div class="table-header">
@@ -882,7 +882,7 @@ function renderStats(logs, start, end) {
         </tbody>
       </table>
     </div>
-
+ 
     <!-- Par action -->
     <div class="table-card">
       <div class="table-header">
@@ -907,9 +907,9 @@ function renderStats(logs, start, end) {
         </tbody>
       </table>
     </div>
-
-
-
+ 
+ 
+ 
     <!-- (top produits supprimé) -->
     <div style="display:none"><table>
         <thead><tr><th>#</th><th>Produit</th><th>Scans</th><th>Fréquence</th></tr></thead>
@@ -932,12 +932,12 @@ function renderStats(logs, start, end) {
   `;
   setTimeout(() => drawDayChart(sortedDays, logs, state.selectedUsers.map(u=>u.name)), 50);
 }
-
+ 
 // ==================== CHART ====================
 const USER_COLORS = ['#006c7c','#e07b39','#5a8a3c','#7b4fa6','#c0392b','#2471a3','#d4ac0d','#1abc9c'];
-
+ 
 let chartVisible = true;
-
+ 
 function toggleChart() {
   const card = document.getElementById('chart-card');
   const btn = document.getElementById('btn-toggle-chart');
@@ -945,16 +945,16 @@ function toggleChart() {
   card.style.display = chartVisible ? '' : 'none';
   btn.textContent = chartVisible ? '📊 Cacher le graphique' : '📊 Afficher le graphique';
 }
-
+ 
 function drawDayChart(sortedDays, logs, users) {
   const topCard = document.getElementById('chart-card');
   const btn = document.getElementById('btn-toggle-chart');
   if (topCard) { topCard.style.display = chartVisible ? '' : 'none'; }
   if (btn) btn.style.display = '';
-
+ 
   const canvas = document.getElementById('chart-jours-top');
   if (!canvas) return;
-
+ 
   // Build data: per day per user
   const dayMap = {}; // day -> { userName: count }
   logs.forEach(l => {
@@ -963,11 +963,11 @@ function drawDayChart(sortedDays, logs, users) {
     const name = l._user_name || l.user;
     dayMap[day][name] = (dayMap[day][name] || 0) + (l._count ? Number(l._count) : 1);
   });
-
+ 
   const days = sortedDays.map(d => d[0]);
   const userNames = [...new Set(logs.map(l => l._user_name || l.user))];
   const maxVal = Math.max(...days.map(d => Object.values(dayMap[d] || {}).reduce((a,b)=>a+b,0)), 1);
-
+ 
   const dpr = window.devicePixelRatio || 1;
   const legendW = 160;
   const containerW = canvas.parentElement.offsetWidth - legendW - 20;
@@ -978,13 +978,13 @@ function drawDayChart(sortedDays, logs, users) {
   canvas.style.height = H + 'px';
   const ctx = canvas.getContext('2d');
   ctx.scale(dpr, dpr);
-
+ 
   const pad = { top: 10, right: 10, bottom: 30, left: 36 };
   const chartW = containerW - pad.left - pad.right;
   const chartH = H - pad.top - pad.bottom;
-
+ 
   ctx.clearRect(0, 0, containerW, H);
-
+ 
   // Grid
   ctx.strokeStyle = '#e0e0e0';
   ctx.lineWidth = 1;
@@ -995,11 +995,11 @@ function drawDayChart(sortedDays, logs, users) {
     ctx.textAlign = 'right';
     ctx.fillText(Math.round(maxVal * i / 4), pad.left - 4, y + 3);
   }
-
+ 
   const groupW = chartW / days.length;
   const barPad = 3;
   const barW = Math.max(4, (groupW - barPad * 2) / Math.max(userNames.length, 1) - 1);
-
+ 
   days.forEach((day, di) => {
     const gx = pad.left + di * groupW + barPad;
     userNames.forEach((uname, ui) => {
@@ -1013,7 +1013,7 @@ function drawDayChart(sortedDays, logs, users) {
       ctx.roundRect(x, y, barW, barH, [2, 2, 0, 0]);
       ctx.fill();
     });
-
+ 
     // Date label
     const label = day.slice(5); // MM-DD
     ctx.fillStyle = '#666';
@@ -1021,11 +1021,11 @@ function drawDayChart(sortedDays, logs, users) {
     ctx.textAlign = 'center';
     ctx.fillText(label, pad.left + di * groupW + groupW / 2, pad.top + chartH + 18);
   });
-
+ 
   // Draw legend on separate canvas
   drawLegend(userNames);
 }
-
+ 
 function drawLegend(userNames) {
   const canvas = document.getElementById('chart-legend');
   if (!canvas) return;
@@ -1044,9 +1044,9 @@ function drawLegend(userNames) {
     ctx.fillText(name, 18, y + 2);
   });
 }
-
+ 
 // ==================== GOOGLE SHEET ====================
-
+ 
 async function getLastSavedDate() {
   try {
     const resp = await fetch(state.sheetUrl);
@@ -1056,17 +1056,17 @@ async function getLastSavedDate() {
     return dates[dates.length - 1];
   } catch(e) { return null; }
 }
-
+ 
 async function majSheet() {
   if (!state.authToken) { toast('Configure d\'abord le token', true); return; }
   if (state.users.length === 0) { toast('Aucun utilisateur configuré', true); return; }
-
+ 
   const startInput = document.getElementById('date-start').value;
   const endInput = document.getElementById('date-end').value;
-
+ 
   let startDate, endDate;
   endDate = fmt(new Date());
-
+ 
   if (startInput && endInput) {
     startDate = startInput;
     endDate = endInput;
@@ -1082,15 +1082,15 @@ async function majSheet() {
       return;
     }
   }
-
+ 
   if (startDate > endDate) { toast('Données déjà à jour !', false); return; }
-
+ 
   toast('Récupération des données...');
   const days = getDaysInRange(startDate, endDate);
   const totalRequests = days.length * state.users.length;
   document.getElementById('progress-bar').classList.add('active');
   document.getElementById('progress-fill').style.width = '0%';
-
+ 
   let allLogs = [];
   let done = 0;
   for (const user of state.users) {
@@ -1106,23 +1106,23 @@ async function majSheet() {
       document.getElementById('progress-fill').style.width = Math.round(done/totalRequests*100) + '%';
     }
   }
-
+ 
   document.getElementById('progress-bar').classList.remove('active');
-
+ 
   // Aggregate: user x date x action -> count
   const agg = {};
   allLogs.forEach(l => {
     const key = `${l._user_name}||${l.date?.split('T')[0]}||${(l.action||'').toLowerCase()}`;
     agg[key] = (agg[key] || 0) + 1;
   });
-
+ 
   const rows = Object.entries(agg).map(([key, count]) => {
     const [user, date, action] = key.split('||');
     return { user, date, action, count };
   });
-
+ 
   if (rows.length === 0) { toast('Aucune donnée à envoyer', true); return; }
-
+ 
   toast('Envoi vers Google Sheets...');
   try {
     await fetch(state.sheetUrl, {
@@ -1134,7 +1134,7 @@ async function majSheet() {
     toast('Erreur envoi Sheet : ' + e.message, true);
   }
 }
-
+ 
 async function chargerSheet() {
   toast('Chargement depuis Google Sheets...');
   try {
@@ -1148,22 +1148,22 @@ async function chargerSheet() {
     toast('Erreur chargement : ' + e.message, true);
   }
 }
-
+ 
 function renderSheetStats(rows) {
   // Build structure: user -> date -> action -> count
   const dates = [...new Set(rows.map(r => r.date))].sort();
   const users = [...new Set(rows.map(r => r.user))];
   const actions = [...new Set(rows.map(r => r.action))];
-
+ 
   // Total par user
   const totalByUser = {};
   users.forEach(u => { totalByUser[u] = 0; });
   rows.forEach(r => { totalByUser[r.user] = (totalByUser[r.user] || 0) + Number(r.count); });
-
+ 
   // Total par action
   const totalByAction = {};
   rows.forEach(r => { totalByAction[r.action] = (totalByAction[r.action] || 0) + Number(r.count); });
-
+ 
   // Par semaine
   const byWeek = {};
   rows.forEach(r => {
@@ -1171,34 +1171,34 @@ function renderSheetStats(rows) {
     const week = getWeekKey(d);
     byWeek[week] = (byWeek[week] || 0) + Number(r.count);
   });
-
+ 
   // Par mois
   const byMonth = {};
   rows.forEach(r => {
     const month = r.date?.slice(0, 7);
     byMonth[month] = (byMonth[month] || 0) + Number(r.count);
   });
-
+ 
   const totalScans = rows.reduce((s, r) => s + Number(r.count), 0);
   const avgPerDay = dates.length > 0 ? Math.round(totalScans / dates.length) : 0;
-
+ 
   const maxUserVal = Math.max(...Object.values(totalByUser), 1);
   const maxActionVal = Math.max(...Object.values(totalByAction), 1);
   const maxWeek = Math.max(...Object.values(byWeek), 1);
   const maxMonth = Math.max(...Object.values(byMonth), 1);
-
+ 
   document.getElementById('stats-content').innerHTML = `
     <div style="background:var(--surface2);border-radius:8px;padding:8px 14px;margin-bottom:12px;font-size:11px;color:var(--accent);font-weight:500;">
       📂 Données Sheet — ${dates.length} jours · ${dates[0]} → ${dates[dates.length-1]}
     </div>
-
+ 
     <div class="kpi-grid">
       <div class="kpi-card"><div class="kpi-label">Total scans</div><div class="kpi-value">${totalScans}</div><div class="kpi-sub">${dates.length} jours</div></div>
       <div class="kpi-card"><div class="kpi-label">Moy. / jour</div><div class="kpi-value">${avgPerDay}</div><div class="kpi-sub">tous utilisateurs</div></div>
       <div class="kpi-card"><div class="kpi-label">Utilisateurs</div><div class="kpi-value" style="color:var(--text)">${users.length}</div><div class="kpi-sub">actifs sur la période</div></div>
       <div class="kpi-card"><div class="kpi-label">Jours couverts</div><div class="kpi-value" style="color:var(--text)">${dates.length}</div><div class="kpi-sub">${Object.keys(byMonth).length} mois</div></div>
     </div>
-
+ 
     <!-- Par utilisateur -->
     <div class="table-card">
       <div class="table-header"><div class="table-title">Scans par utilisateur</div><div class="badge">historique complet</div></div>
@@ -1215,7 +1215,7 @@ function renderSheetStats(rows) {
         }).join('')}
       </tbody></table>
     </div>
-
+ 
     <!-- Par action -->
     <div class="table-card">
       <div class="table-header"><div class="table-title">Scans par type d'action</div><div class="badge">historique complet</div></div>
@@ -1229,7 +1229,7 @@ function renderSheetStats(rows) {
           </tr>`).join('')}
       </tbody></table>
     </div>
-
+ 
     <!-- Par mois -->
     <div class="table-card">
       <div class="table-header"><div class="table-title">Évolution par mois</div></div>
@@ -1243,7 +1243,7 @@ function renderSheetStats(rows) {
           </tr>`).join('')}
       </tbody></table>
     </div>
-
+ 
     <!-- Par semaine -->
     <div class="table-card">
       <div class="table-header"><div class="table-title">Évolution par semaine</div></div>
@@ -1258,7 +1258,7 @@ function renderSheetStats(rows) {
       </tbody></table>
     </div>
   `;
-
+ 
   // Draw historical chart
   const sortedDaysForChart = dates.map(d => {
     const count = rows.filter(r => r.date === d).reduce((s,r) => s+Number(r.count), 0);
@@ -1275,14 +1275,14 @@ function renderSheetStats(rows) {
     _count: r.count
   })), users), 50);
 }
-
+ 
 function getWeekKey(d) {
   const tmp = new Date(d);
   tmp.setHours(0,0,0,0);
   tmp.setDate(tmp.getDate() - tmp.getDay() + 1); // Monday
   return fmt(tmp);
 }
-
+ 
 // ==================== TOAST ====================
 function toast(msg, error = false) {
   const el = document.getElementById('toast');
@@ -1290,7 +1290,7 @@ function toast(msg, error = false) {
   el.className = 'toast show' + (error ? ' error' : '');
   setTimeout(() => el.classList.remove('show'), 3000);
 }
-
+ 
 init();
 </script>
 </body>
