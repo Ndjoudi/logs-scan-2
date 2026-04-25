@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Logs PDA — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f9f9f9;
+    --surface2: #e3eceb;
+    --border: #e0e0e0;
+    --accent: #006c7c;
+    --text: #111111;
+    --muted: #666666;
+    --danger: #c0392b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* HEADER */
+  header {
+    padding: 24px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+  }
+  header h1 {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--accent);
+  }
+  header h1 span { color: #111; }
+  .header-right { display: flex; gap: 10px; align-items: center; }
+  .btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn.primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    font-weight: 500;
+  }
+  .btn.primary:hover { background: #005566; color: #fff; }
+  .btn.danger { border-color: var(--danger); color: var(--danger); }
+  .btn.danger:hover { background: var(--danger); color: #fff; }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+  }
+  .tab {
+    padding: 14px 20px;
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* PANELS */
+  .panel { display: none; padding: 16px 24px; }
+  .panel.active { display: block; }
+
+  /* CONFIG PANEL */
+  .config-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 12px;
+  }
+  .config-section h2 {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 18px;
+  }
+  .form-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+  .form-group { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 180px; }
+  .form-group label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .form-group input {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .form-group input:focus { border-color: var(--accent); }
+
+  /* USERS LIST */
+  .users-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .user-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    transition: border-color 0.15s;
+  }
+  .user-item:hover { border-color: var(--accent); }
+  .user-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .user-info { flex: 1; }
+  .user-name { font-size: 13px; font-weight: 500; }
+  .user-email { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .user-actions { display: flex; gap: 6px; }
+  .icon-btn {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    transition: all 0.15s;
+  }
+  .icon-btn:hover { border-color: var(--danger); color: var(--danger); }
+  .icon-btn.edit:hover { border-color: var(--text); color: var(--text); }
+
+  /* STATS PANEL */
+  .controls-bar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+  .user-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .chip {
+    padding: 7px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--muted);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .chip:hover { border-color: var(--accent); color: var(--accent); }
+  .chip.active { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 500; }
+  .chip.all { border-color: var(--accent); color: var(--accent); }
+  .chip.all.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* STATS GRID */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    transition: border-color 0.15s;
+  }
+  .kpi-card:hover { border-color: var(--accent); }
+  .kpi-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
+  .kpi-value { font-family: 'IBM Plex Sans', sans-serif; font-size: 22px; font-weight: 700; color: var(--accent); }
+  .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  /* TABLES */
+  .table-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .table-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .table-title {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .badge {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    background: var(--surface2);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left;
+    padding: 10px 20px;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+  }
+  td {
+    padding: 11px 20px;
+    font-size: 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface2); }
+  .bar-cell { display: flex; align-items: center; gap: 10px; }
+  .bar-bg { flex: 1; height: 6px; background: var(--surface2); border-radius: 3px; min-width: 60px; }
+  .bar-fill { height: 6px; border-radius: 3px; background: var(--accent); transition: width 0.3s; }
+  .bar-fill.orange { background: var(--accent2); }
+  .bar-fill.blue { background: var(--accent3); }
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 500;
+  }
+  .tag.replacer { background: #006c7c18; color: var(--text); border: 1px solid var(--accent3); }
+  .tag.rezoner { background: #e3eceb; color: #006c7c; border: 1px solid #006c7c; }
+  .tag.stock { background: #e3eceb; color: #006c7c; border: 1px solid #006c7c; }
+  .tag.other { background: #f0f0f0; color: #666; border: 1px solid #ccc; }
+
+  /* LOADING */
+  .loading {
+    display: none;
+    text-align: center;
+    padding: 60px;
+    color: var(--muted);
+  }
+  .loading.active { display: block; }
+  .spinner {
+    width: 36px; height: 36px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 13px;
+    color: var(--accent);
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 999;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.error { border-color: var(--danger); color: var(--danger); }
+
+  /* PROGRESS */
+  .progress-bar {
+    display: none;
+    height: 3px;
+    background: var(--surface2);
+    border-radius: 2px;
+    margin-top: 10px;
+    overflow: hidden;
+  }
+  .progress-bar.active { display: block; }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.3s;
+  }
+
+  .section-label {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+    margin-top: 12px;
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.3) sepia(1) hue-rotate(150deg);
+  }
+</style>
+</head>
+<body>
+<div style="display:flex;justify-content:flex-end;align-items:center;padding:10px 24px;border-bottom:1px solid var(--border);background:var(--surface);">
+  <button class="btn" onclick="showTab('stats')" id="tab-stats" style="margin-right:6px;">Statistiques</button>
+  <button class="btn" onclick="showTab('config')" id="tab-config">⚙ Config</button>
+</div>
+
+
+<!-- STATS PANEL -->
+<div class="panel active" id="panel-stats">
+
+  <div class="table-card" id="chart-card" style="margin-bottom:12px;display:none;">
+    <div style="padding: 16px 20px 10px; display:flex; align-items:flex-start; gap:16px;">
+      <canvas id="chart-jours-top" height="160" style="flex:1;min-width:0;"></canvas>
+      <canvas id="chart-legend" style="flex-shrink:0;align-self:center;"></canvas>
+    </div>
+  </div>
+
+  <div class="controls-bar">
+    <div class="form-group">
+      <label>Date début</label>
+      <input type="date" id="date-start">
+    </div>
+    <div class="form-group">
+      <label>Date fin</label>
+      <input type="date" id="date-end">
+    </div>
+    <button class="btn primary" onclick="loadStats()">▶ Analyser</button>
+    <button class="btn" id="btn-toggle-chart" onclick="toggleChart()" style="display:none;">📊 Cacher le graphique</button>
+    <button class="btn" onclick="majSheet()" style="border-color:#006c7c;color:#006c7c;">↑ Mettre à jour</button>
+    <button class="btn" onclick="chargerSheet()">↓ Charger</button>
+    <div style="flex:1"></div>
+    <div id="fetch-info" style="font-size:11px;color:var(--muted);text-align:right;"></div>
+  </div>
+
+  <div class="section-label">Filtrer par utilisateur</div>
+  <div class="user-chips" id="user-chips"></div>
+
+  <div class="section-label">Filtrer par type de scan</div>
+  <div class="user-chips" id="action-chips"></div>
+
+  <div class="progress-bar" id="progress-bar">
+    <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+  </div>
+
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <div id="loading-text">Chargement...</div>
+  </div>
+
+  <div id="stats-content">
+    
+  </div>
+
+</div>
+
+<!-- CONFIG PANEL -->
+<div class="panel" id="panel-config">
+
+  <div class="config-section">
+    <h2>🔑 Authentification</h2>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Authorization Token</label>
+        <input type="text" id="auth-token" placeholder="28b3ed928e9bcce3a4aa1336abcf1a45204a7b0f">
+      </div>
+      <div class="form-group">
+        <label>X-Api-Bypass-Token</label>
+        <input type="text" id="bypass-token" placeholder="a2f0ba7113fa96991b93de8db22b8ab5ef0625fa">
+      </div>
+    </div>
+    <div class="form-row" style="margin-top:10px;">
+      <div class="form-group" style="max-width:120px;">
+        <label>Center ID</label>
+        <input type="text" id="center-id" placeholder="9">
+      </div>
+      <div style="display:flex;align-items:flex-end;">
+        <button class="btn primary" onclick="saveConfig()">💾 Sauvegarder</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="config-section">
+    <h2>👥 Utilisateurs</h2>
+
+    <div class="users-list" id="users-list"></div>
+
+    <div class="form-row" id="user-form">
+      <div class="form-group">
+        <label>Nom affiché</label>
+        <input type="text" id="new-user-name" placeholder="Alex B.">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="text" id="new-user-email" placeholder="alexboissel15@gmail.com">
+      </div>
+      <div style="display:flex;align-items:flex-end;">
+        <button class="btn primary" onclick="addUser()">+ Ajouter</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ==================== STATE ====================
+let state = {
+  users: [],
+  authToken: '',
+  bypassToken: '',
+  centerId: '9',
+  allLogs: [],
+  selectedUsers: [],
+  selectedActions: null, // null = tous
+  sheetUrl: 'https://script.google.com/macros/s/AKfycbxo0s_oqOoebbNd3yDeWt5L_PG1VO1oL5eZOoprCiy3NwSgh-e5WoRJRJQGi7QvhBA/exec',
+  savedData: [], // données chargées depuis Sheet
+};
+
+// ==================== INIT ====================
+function init() {
+  const saved = localStorage.getItem('pda_config');
+  if (saved) {
+    const cfg = JSON.parse(saved);
+    state.users = cfg.users || [];
+    state.authToken = cfg.authToken || '';
+    state.bypassToken = cfg.bypassToken || '';
+    state.centerId = cfg.centerId || '9';
+  }
+
+  // Default dates: last 7 days
+  const today = new Date();
+  const week = new Date(today);
+  week.setDate(week.getDate() - 6);
+  document.getElementById('date-end').value = fmt(today);
+  document.getElementById('date-start').value = fmt(week);
+
+  renderConfig();
+  renderChips();
+  updateStatus();
+}
+
+function fmt(d) {
+  return d.toISOString().split('T')[0];
+}
+
+function updateStatus() {
+  const el = document.getElementById('status-dot');
+  if (!el) return;
+  if (state.authToken) {
+    el.innerHTML = '<span style="color:var(--accent)">● connecté</span>';
+  } else {
+    el.textContent = '● non configuré';
+  }
+}
+
+// ==================== TABS ====================
+function showTab(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.getElementById('tab-stats').style.borderColor = name === 'stats' ? 'var(--accent)' : '';
+  document.getElementById('tab-stats').style.color = name === 'stats' ? 'var(--accent)' : '';
+  document.getElementById('tab-config').style.borderColor = name === 'config' ? 'var(--accent)' : '';
+  document.getElementById('tab-config').style.color = name === 'config' ? 'var(--accent)' : '';
+}
+
+// ==================== CONFIG ====================
+function saveConfig() {
+  state.authToken = document.getElementById('auth-token').value.trim();
+  state.bypassToken = document.getElementById('bypass-token').value.trim();
+  state.centerId = document.getElementById('center-id').value.trim() || '9';
+  localStorage.setItem('pda_config', JSON.stringify({
+    users: state.users,
+    authToken: state.authToken,
+    bypassToken: state.bypassToken,
+    centerId: state.centerId,
+  }));
+  updateStatus();
+  toast('Configuration sauvegardée ✓');
+}
+
+function renderConfig() {
+  document.getElementById('auth-token').value = state.authToken;
+  document.getElementById('bypass-token').value = state.bypassToken;
+  document.getElementById('center-id').value = state.centerId;
+  renderUsersList();
+}
+
+function renderUsersList() {
+  const el = document.getElementById('users-list');
+  if (state.users.length === 0) {
+    el.innerHTML = '<div style="color:var(--muted);font-size:12px;padding:8px 0;">Aucun utilisateur configuré.</div>';
+    return;
+  }
+  el.innerHTML = state.users.map((u, i) => `
+    <div class="user-item">
+      <div class="user-avatar">${initials(u.name)}</div>
+      <div class="user-info">
+        <div class="user-name">${u.name}</div>
+        <div class="user-email">${u.email}</div>
+      </div>
+      <div class="user-actions">
+        <button class="icon-btn danger" onclick="removeUser(${i})" title="Supprimer">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function initials(name) {
+  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+}
+
+function addUser() {
+  const name = document.getElementById('new-user-name').value.trim();
+  const email = document.getElementById('new-user-email').value.trim();
+  if (!name || !email) { toast('Remplis le nom et l\'email', true); return; }
+  state.users.push({ name, email });
+  document.getElementById('new-user-name').value = '';
+  document.getElementById('new-user-email').value = '';
+  saveUsers();
+  renderUsersList();
+  renderChips();
+  toast('Utilisateur ajouté ✓');
+}
+
+function removeUser(i) {
+  state.users.splice(i, 1);
+  saveUsers();
+  renderUsersList();
+  renderChips();
+}
+
+function saveUsers() {
+  const cfg = JSON.parse(localStorage.getItem('pda_config') || '{}');
+  cfg.users = state.users;
+  localStorage.setItem('pda_config', JSON.stringify(cfg));
+}
+
+// ==================== CHIPS ====================
+function renderChips() {
+  const el = document.getElementById('user-chips');
+  if (state.users.length === 0) {
+    el.innerHTML = '<span style="color:var(--muted);font-size:12px;">Aucun utilisateur — configure-les dans l\'onglet Config.</span>';
+    return;
+  }
+  let html = `<div class="chip all active" onclick="toggleAll(this)">Tous</div>`;
+  html += state.users.map((u, i) => `
+    <div class="chip" onclick="toggleChip(this, ${i})">${u.name}</div>
+  `).join('');
+  el.innerHTML = html;
+  state.selectedUsers = [...state.users];
+}
+
+function toggleAll(el) {
+  document.querySelectorAll('#user-chips .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  state.selectedUsers = [...state.users];
+  if (state.allLogs.length) rerender();
+}
+
+function toggleChip(el, idx) {
+  document.querySelector('#user-chips .chip.all')?.classList.remove('active');
+  el.classList.toggle('active');
+  const active = [...document.querySelectorAll('#user-chips .chip:not(.all).active')];
+  state.selectedUsers = active.map(c => {
+    const i = [...document.querySelectorAll('#user-chips .chip:not(.all)')].indexOf(c);
+    return state.users[i];
+  });
+  if (state.selectedUsers.length === 0) {
+    document.querySelector('#user-chips .chip.all')?.classList.add('active');
+    state.selectedUsers = [...state.users];
+  }
+  if (state.allLogs.length) rerender();
+}
+
+// ==================== FETCH LOGS ====================
+async function fetchDayLogs(user, day) {
+  const url = `https://api.labellevie.com/1.0/api/products/logs-pda?center_id=${state.centerId}&day=${day}&user=${encodeURIComponent(user.email)}`;
+  const headers = {
+    'Authorization': 'Token ' + state.authToken,
+    'X-Api-Bypass-Token': state.bypassToken,
+    'Accept': 'application/json',
+  };
+  const resp = await fetch(url, { headers });
+  if (resp.status === 304 || resp.ok) {
+    try { return await resp.json(); } catch { return []; }
+  }
+  return [];
+}
+
+function getDaysInRange(start, end) {
+  const days = [];
+  const cur = new Date(start);
+  const endD = new Date(end);
+  while (cur <= endD) {
+    days.push(fmt(cur));
+    cur.setDate(cur.getDate() + 1);
+  }
+  return days;
+}
+
+async function loadStats() {
+  if (!state.authToken) {
+    toast('Configure d\'abord le token dans Config', true);
+    showTab('config');
+    return;
+  }
+  if (state.selectedUsers.length === 0 || state.users.length === 0) {
+    toast('Aucun utilisateur sélectionné', true);
+    return;
+  }
+
+  const start = document.getElementById('date-start').value;
+  const end = document.getElementById('date-end').value;
+  if (!start || !end) { toast('Sélectionne une période', true); return; }
+
+  const days = getDaysInRange(start, end);
+  const totalRequests = days.length * state.selectedUsers.length;
+
+  document.getElementById('loading').classList.add('active');
+  document.getElementById('stats-content').innerHTML = '';
+  document.getElementById('progress-bar').classList.add('active');
+  document.getElementById('progress-fill').style.width = '0%';
+  document.getElementById('fetch-info').textContent = '';
+
+  let allLogs = [];
+  let done = 0;
+
+  for (const user of state.selectedUsers) {
+    for (const day of days) {
+      try {
+        const logs = await fetchDayLogs(user, day);
+        if (Array.isArray(logs)) {
+          logs.forEach(l => { l._user_name = user.name; });
+          allLogs = allLogs.concat(logs);
+        }
+      } catch(e) {}
+      done++;
+      const pct = Math.round((done / totalRequests) * 100);
+      document.getElementById('progress-fill').style.width = pct + '%';
+      document.getElementById('loading-text').textContent = `Chargement... ${done}/${totalRequests} requêtes`;
+    }
+  }
+
+  document.getElementById('loading').classList.remove('active');
+  document.getElementById('progress-bar').classList.remove('active');
+  document.getElementById('fetch-info').textContent = `${allLogs.length} entrées · ${totalRequests} requêtes`;
+
+  state.allLogs = allLogs;
+  state.selectedActions = null;
+  renderActionChips(allLogs);
+  renderStats(getFilteredLogs(), start, end);
+}
+
+const actionMap = {
+  'updated':      { label: 'rezoné',       cls: 'rezoner' },
+  'update':       { label: 'rezoner',       cls: 'rezoner' },
+  'alteredstock': { label: 'stock corrigé', cls: 'stock' },
+  'alterstock':   { label: 'stock visuel',  cls: 'stock' },
+  'replacer':     { label: 'replacer',      cls: 'replacer' },
+};
+
+// ==================== FILTERS ====================
+function getFilteredLogs() {
+  let logs = state.allLogs;
+  // Filter by selected users
+  const selectedNames = state.selectedUsers.map(u => u.name);
+  if (selectedNames.length < state.users.length) {
+    logs = logs.filter(l => selectedNames.includes(l._user_name));
+  }
+  // Filter by selected actions
+  if (state.selectedActions && state.selectedActions.length > 0) {
+    logs = logs.filter(l => state.selectedActions.includes((l.action||'').toLowerCase()));
+  }
+  return logs;
+}
+
+const ACTION_LABEL_MAP = {
+  'updated':      'rezoné',
+  'update':       'rezoner',
+  'alteredstock': 'stock corrigé',
+  'alterstock':   'stock visuel',
+  'replacer':     'replacer',
+};
+
+function renderActionChips(logs) {
+  const el = document.getElementById('action-chips');
+  if (!el) return;
+  const actions = [...new Set(logs.map(l => (l.action||'').toLowerCase()))].filter(Boolean);
+  let html = `<div class="chip all active" onclick="toggleAllActions(this)">Tous</div>`;
+  html += actions.map(a => {
+    const label = ACTION_LABEL_MAP[a] || a;
+    return `<div class="chip" data-action="${a}" onclick="toggleActionChip(this)">${label}</div>`;
+  }).join('');
+  el.innerHTML = html;
+}
+
+function toggleAllActions(el) {
+  document.querySelectorAll('#action-chips .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  state.selectedActions = null;
+  rerender();
+}
+
+function toggleActionChip(el) {
+  document.querySelector('#action-chips .chip.all')?.classList.remove('active');
+  el.classList.toggle('active');
+  const active = [...document.querySelectorAll('#action-chips .chip:not(.all).active')];
+  state.selectedActions = active.length > 0 ? active.map(c => c.dataset.action) : null;
+  if (!state.selectedActions) {
+    document.querySelector('#action-chips .chip.all')?.classList.add('active');
+  }
+  rerender();
+}
+
+function rerender() {
+  const start = document.getElementById('date-start').value;
+  const end = document.getElementById('date-end').value;
+  renderStats(getFilteredLogs(), start, end);
+}
+
+// ==================== RENDER STATS ====================
+function renderStats(logs, start, end) {
+  if (logs.length === 0) {
+    document.getElementById('stats-content').innerHTML = `
+      <div class="empty-state">
+        <div class="icon">🔍</div>
+        Aucun log trouvé sur cette période.
+      </div>`;
+    return;
+  }
+
+  // KPIs
+  const totalScans = logs.length;
+  const uniqueProducts = new Set(logs.map(l => l.product_id)).size;
+  const uniqueUsers = new Set(logs.map(l => l.user)).size;
+  const uniqueDays = new Set(logs.map(l => l.date?.split('T')[0])).size;
+
+  // Par utilisateur
+  const byUser = {};
+  logs.forEach(l => {
+    const k = l._user_name || l.user;
+    byUser[k] = (byUser[k] || 0) + 1;
+  });
+  const maxUser = Math.max(...Object.values(byUser));
+
+  // Par action
+  const byAction = {};
+  logs.forEach(l => {
+    const a = l.action || 'inconnu';
+    byAction[a] = (byAction[a] || 0) + 1;
+  });
+
+  // Par jour
+  const byDay = {};
+  logs.forEach(l => {
+    const d = l.date?.split('T')[0] || '?';
+    byDay[d] = (byDay[d] || 0) + 1;
+  });
+  const sortedDays = Object.entries(byDay).sort((a,b) => a[0].localeCompare(b[0]));
+  const maxDay = Math.max(...Object.values(byDay));
+
+  // Par produit
+  const byProduct = {};
+  logs.forEach(l => {
+    const k = l.product_name || ('Produit #' + l.product_id);
+    byProduct[k] = (byProduct[k] || 0) + 1;
+  });
+  const topProducts = Object.entries(byProduct).sort((a,b) => b[1]-a[1]).slice(0, 15);
+  const maxProd = topProducts[0]?.[1] || 1;
+
+  // actionMap and actionTag defined globally
+
+  document.getElementById('stats-content').innerHTML = `
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Total scans</div>
+        <div class="kpi-value">${totalScans}</div>
+        <div class="kpi-sub">${uniqueDays} jour(s) analysé(s)</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Produits uniques</div>
+        <div class="kpi-value" style="color:var(--text)">${uniqueProducts}</div>
+        <div class="kpi-sub">références scannées</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Utilisateurs actifs</div>
+        <div class="kpi-value" style="color:var(--text)">${uniqueUsers}</div>
+        <div class="kpi-sub">sur la période</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Moy. / jour</div>
+        <div class="kpi-value" style="color:var(--accent)">${uniqueDays > 0 ? Math.round(totalScans/uniqueDays) : 0}</div>
+        <div class="kpi-sub">scans par jour actif</div>
+      </div>
+    </div>
+
+    <!-- Par utilisateur -->
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-title">Scans par utilisateur</div>
+        <div class="badge">${Object.keys(byUser).length} users</div>
+      </div>
+      <table>
+        <thead><tr><th>Utilisateur</th><th>Scans</th><th>Répartition</th><th>% total</th></tr></thead>
+        <tbody>
+          ${Object.entries(byUser).sort((a,b)=>b[1]-a[1]).map(([name, count]) => `
+            <tr>
+              <td><span style="color:var(--accent)">${name}</span></td>
+              <td><strong>${count}</strong></td>
+              <td>
+                <div class="bar-cell">
+                  <div class="bar-bg"><div class="bar-fill" style="width:${Math.round(count/maxUser*100)}%"></div></div>
+                </div>
+              </td>
+              <td style="color:var(--muted)">${Math.round(count/totalScans*100)}%</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Par action -->
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-title">Scans par type d'action</div>
+        <div class="badge">${Object.keys(byAction).length} types</div>
+      </div>
+      <table>
+        <thead><tr><th>Action</th><th>Scans</th><th>Répartition</th><th>% total</th></tr></thead>
+        <tbody>
+          ${Object.entries(byAction).sort((a,b)=>b[1]-a[1]).map(([action, count]) => `
+            <tr>
+              <td>${actionTag(action)}</td>
+              <td><strong>${count}</strong></td>
+              <td>
+                <div class="bar-cell">
+                  <div class="bar-bg"><div class="bar-fill" style="width:${Math.round(count/totalScans*100)}%"></div></div>
+                </div>
+              </td>
+              <td style="color:var(--muted)">${Math.round(count/totalScans*100)}%</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+
+
+
+    <!-- (top produits supprimé) -->
+    <div style="display:none"><table>
+        <thead><tr><th>#</th><th>Produit</th><th>Scans</th><th>Fréquence</th></tr></thead>
+        <tbody>
+          ${topProducts.map(([name, count], i) => `
+            <tr>
+              <td style="color:var(--muted)">${i+1}</td>
+              <td style="max-width:320px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</td>
+              <td><strong>${count}</strong></td>
+              <td>
+                <div class="bar-cell">
+                  <div class="bar-bg"><div class="bar-fill" style="width:${Math.round(count/maxProd*100)}%"></div></div>
+                </div>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+  setTimeout(() => drawDayChart(sortedDays, logs, state.selectedUsers.map(u=>u.name)), 50);
+}
+
+// ==================== CHART ====================
+const USER_COLORS = ['#006c7c','#e07b39','#5a8a3c','#7b4fa6','#c0392b','#2471a3','#d4ac0d','#1abc9c'];
+
+let chartVisible = true;
+
+function toggleChart() {
+  const card = document.getElementById('chart-card');
+  const btn = document.getElementById('btn-toggle-chart');
+  chartVisible = !chartVisible;
+  card.style.display = chartVisible ? '' : 'none';
+  btn.textContent = chartVisible ? '📊 Cacher le graphique' : '📊 Afficher le graphique';
+}
+
+function drawDayChart(sortedDays, logs, users) {
+  const topCard = document.getElementById('chart-card');
+  const btn = document.getElementById('btn-toggle-chart');
+  if (topCard) { topCard.style.display = chartVisible ? '' : 'none'; }
+  if (btn) btn.style.display = '';
+
+  const canvas = document.getElementById('chart-jours-top');
+  if (!canvas) return;
+
+  // Build data: per day per user
+  const dayMap = {}; // day -> { userName: count }
+  logs.forEach(l => {
+    const day = l.date?.split('T')[0] || '?';
+    if (!dayMap[day]) dayMap[day] = {};
+    const name = l._user_name || l.user;
+    dayMap[day][name] = (dayMap[day][name] || 0) + (l._count ? Number(l._count) : 1);
+  });
+
+  const days = sortedDays.map(d => d[0]);
+  const userNames = [...new Set(logs.map(l => l._user_name || l.user))];
+  const maxVal = Math.max(...days.map(d => Object.values(dayMap[d] || {}).reduce((a,b)=>a+b,0)), 1);
+
+  const dpr = window.devicePixelRatio || 1;
+  const legendW = 160;
+  const containerW = canvas.parentElement.offsetWidth - legendW - 20;
+  const H = 160;
+  canvas.width = containerW * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = containerW + 'px';
+  canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const pad = { top: 10, right: 10, bottom: 30, left: 36 };
+  const chartW = containerW - pad.left - pad.right;
+  const chartH = H - pad.top - pad.bottom;
+
+  ctx.clearRect(0, 0, containerW, H);
+
+  // Grid
+  ctx.strokeStyle = '#e0e0e0';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.top + chartH - (i / 4) * chartH;
+    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left + chartW, y); ctx.stroke();
+    ctx.fillStyle = '#999'; ctx.font = '10px IBM Plex Sans, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(Math.round(maxVal * i / 4), pad.left - 4, y + 3);
+  }
+
+  const groupW = chartW / days.length;
+  const barPad = 3;
+  const barW = Math.max(4, (groupW - barPad * 2) / Math.max(userNames.length, 1) - 1);
+
+  days.forEach((day, di) => {
+    const gx = pad.left + di * groupW + barPad;
+    userNames.forEach((uname, ui) => {
+      const count = (dayMap[day] || {})[uname] || 0;
+      if (count === 0) return;
+      const barH = (count / maxVal) * chartH;
+      const x = gx + ui * (barW + 1);
+      const y = pad.top + chartH - barH;
+      ctx.fillStyle = USER_COLORS[ui % USER_COLORS.length];
+      ctx.beginPath();
+      ctx.roundRect(x, y, barW, barH, [2, 2, 0, 0]);
+      ctx.fill();
+    });
+
+    // Date label
+    const label = day.slice(5); // MM-DD
+    ctx.fillStyle = '#666';
+    ctx.font = '10px IBM Plex Sans, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, pad.left + di * groupW + groupW / 2, pad.top + chartH + 18);
+  });
+
+  // Draw legend on separate canvas
+  drawLegend(userNames);
+}
+
+function drawLegend(userNames) {
+  const canvas = document.getElementById('chart-legend');
+  if (!canvas) return;
+  const W = 150, H = Math.max(80, userNames.length * 22 + 16);
+  canvas.width = W; canvas.height = H;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+  userNames.forEach((name, i) => {
+    const y = 14 + i * 22;
+    ctx.fillStyle = USER_COLORS[i % USER_COLORS.length];
+    ctx.beginPath(); ctx.roundRect(0, y - 8, 12, 12, 2); ctx.fill();
+    ctx.fillStyle = '#111';
+    ctx.font = '12px IBM Plex Sans, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(name, 18, y + 2);
+  });
+}
+
+// ==================== GOOGLE SHEET ====================
+
+async function getLastSavedDate() {
+  try {
+    const resp = await fetch(state.sheetUrl);
+    const rows = await resp.json();
+    if (!rows || rows.length === 0) return null;
+    const dates = rows.map(r => r.date).filter(Boolean).sort();
+    return dates[dates.length - 1];
+  } catch(e) { return null; }
+}
+
+async function majSheet() {
+  if (!state.authToken) { toast('Configure d\'abord le token', true); return; }
+  if (state.users.length === 0) { toast('Aucun utilisateur configuré', true); return; }
+
+  const startInput = document.getElementById('date-start').value;
+  const endInput = document.getElementById('date-end').value;
+
+  let startDate, endDate;
+  endDate = fmt(new Date());
+
+  if (startInput && endInput) {
+    startDate = startInput;
+    endDate = endInput;
+  } else {
+    toast('Recherche de la dernière date sauvegardée...', false);
+    const lastDate = await getLastSavedDate();
+    if (lastDate) {
+      const next = new Date(lastDate);
+      next.setDate(next.getDate() + 1);
+      startDate = fmt(next);
+    } else {
+      toast('Aucune donnée dans le Sheet — sélectionne une période', true);
+      return;
+    }
+  }
+
+  if (startDate > endDate) { toast('Données déjà à jour !', false); return; }
+
+  toast('Récupération des données...');
+  const days = getDaysInRange(startDate, endDate);
+  const totalRequests = days.length * state.users.length;
+  document.getElementById('progress-bar').classList.add('active');
+  document.getElementById('progress-fill').style.width = '0%';
+
+  let allLogs = [];
+  let done = 0;
+  for (const user of state.users) {
+    for (const day of days) {
+      try {
+        const logs = await fetchDayLogs(user, day);
+        if (Array.isArray(logs)) {
+          logs.forEach(l => { l._user_name = user.name; });
+          allLogs = allLogs.concat(logs);
+        }
+      } catch(e) {}
+      done++;
+      document.getElementById('progress-fill').style.width = Math.round(done/totalRequests*100) + '%';
+    }
+  }
+
+  document.getElementById('progress-bar').classList.remove('active');
+
+  // Aggregate: user x date x action -> count
+  const agg = {};
+  allLogs.forEach(l => {
+    const key = `${l._user_name}||${l.date?.split('T')[0]}||${(l.action||'').toLowerCase()}`;
+    agg[key] = (agg[key] || 0) + 1;
+  });
+
+  const rows = Object.entries(agg).map(([key, count]) => {
+    const [user, date, action] = key.split('||');
+    return { user, date, action, count };
+  });
+
+  if (rows.length === 0) { toast('Aucune donnée à envoyer', true); return; }
+
+  toast('Envoi vers Google Sheets...');
+  try {
+    await fetch(state.sheetUrl, {
+      method: 'POST',
+      body: JSON.stringify(rows),
+    });
+    toast(`✓ ${rows.length} lignes envoyées dans le Sheet !`);
+  } catch(e) {
+    toast('Erreur envoi Sheet : ' + e.message, true);
+  }
+}
+
+async function chargerSheet() {
+  toast('Chargement depuis Google Sheets...');
+  try {
+    const resp = await fetch(state.sheetUrl);
+    const rows = await resp.json();
+    if (!rows || rows.length === 0) { toast('Aucune donnée dans le Sheet', true); return; }
+    state.savedData = rows;
+    renderSheetStats(rows);
+    toast(`✓ ${rows.length} lignes chargées`);
+  } catch(e) {
+    toast('Erreur chargement : ' + e.message, true);
+  }
+}
+
+function renderSheetStats(rows) {
+  // Build structure: user -> date -> action -> count
+  const dates = [...new Set(rows.map(r => r.date))].sort();
+  const users = [...new Set(rows.map(r => r.user))];
+  const actions = [...new Set(rows.map(r => r.action))];
+
+  // Total par user
+  const totalByUser = {};
+  users.forEach(u => { totalByUser[u] = 0; });
+  rows.forEach(r => { totalByUser[r.user] = (totalByUser[r.user] || 0) + Number(r.count); });
+
+  // Total par action
+  const totalByAction = {};
+  rows.forEach(r => { totalByAction[r.action] = (totalByAction[r.action] || 0) + Number(r.count); });
+
+  // Par semaine
+  const byWeek = {};
+  rows.forEach(r => {
+    const d = new Date(r.date);
+    const week = getWeekKey(d);
+    byWeek[week] = (byWeek[week] || 0) + Number(r.count);
+  });
+
+  // Par mois
+  const byMonth = {};
+  rows.forEach(r => {
+    const month = r.date?.slice(0, 7);
+    byMonth[month] = (byMonth[month] || 0) + Number(r.count);
+  });
+
+  const totalScans = rows.reduce((s, r) => s + Number(r.count), 0);
+  const avgPerDay = dates.length > 0 ? Math.round(totalScans / dates.length) : 0;
+
+  const maxUserVal = Math.max(...Object.values(totalByUser), 1);
+  const maxActionVal = Math.max(...Object.values(totalByAction), 1);
+  const maxWeek = Math.max(...Object.values(byWeek), 1);
+  const maxMonth = Math.max(...Object.values(byMonth), 1);
+
+  document.getElementById('stats-content').innerHTML = `
+    <div style="background:var(--surface2);border-radius:8px;padding:8px 14px;margin-bottom:12px;font-size:11px;color:var(--accent);font-weight:500;">
+      📂 Données Sheet — ${dates.length} jours · ${dates[0]} → ${dates[dates.length-1]}
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-label">Total scans</div><div class="kpi-value">${totalScans}</div><div class="kpi-sub">${dates.length} jours</div></div>
+      <div class="kpi-card"><div class="kpi-label">Moy. / jour</div><div class="kpi-value">${avgPerDay}</div><div class="kpi-sub">tous utilisateurs</div></div>
+      <div class="kpi-card"><div class="kpi-label">Utilisateurs</div><div class="kpi-value" style="color:var(--text)">${users.length}</div><div class="kpi-sub">actifs sur la période</div></div>
+      <div class="kpi-card"><div class="kpi-label">Jours couverts</div><div class="kpi-value" style="color:var(--text)">${dates.length}</div><div class="kpi-sub">${Object.keys(byMonth).length} mois</div></div>
+    </div>
+
+    <!-- Par utilisateur -->
+    <div class="table-card">
+      <div class="table-header"><div class="table-title">Scans par utilisateur</div><div class="badge">historique complet</div></div>
+      <table><thead><tr><th>Utilisateur</th><th>Total</th><th>Moy/jour</th><th>Répartition</th></tr></thead>
+      <tbody>
+        ${users.sort((a,b)=>totalByUser[b]-totalByUser[a]).map(u => {
+          const userDates = [...new Set(rows.filter(r=>r.user===u).map(r=>r.date))].length;
+          return `<tr>
+            <td><strong>${u}</strong></td>
+            <td>${totalByUser[u]}</td>
+            <td style="color:var(--muted)">${userDates > 0 ? Math.round(totalByUser[u]/userDates) : 0}/j</td>
+            <td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(totalByUser[u]/maxUserVal*100)}%"></div></div></div></td>
+          </tr>`;
+        }).join('')}
+      </tbody></table>
+    </div>
+
+    <!-- Par action -->
+    <div class="table-card">
+      <div class="table-header"><div class="table-title">Scans par type d'action</div><div class="badge">historique complet</div></div>
+      <table><thead><tr><th>Action</th><th>Total</th><th>Répartition</th></tr></thead>
+      <tbody>
+        ${Object.entries(totalByAction).sort((a,b)=>b[1]-a[1]).map(([action, count]) => `
+          <tr>
+            <td>${actionTag(action)}</td>
+            <td>${count}</td>
+            <td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(count/maxActionVal*100)}%"></div></div></div></td>
+          </tr>`).join('')}
+      </tbody></table>
+    </div>
+
+    <!-- Par mois -->
+    <div class="table-card">
+      <div class="table-header"><div class="table-title">Évolution par mois</div></div>
+      <table><thead><tr><th>Mois</th><th>Scans</th><th>Activité</th></tr></thead>
+      <tbody>
+        ${Object.entries(byMonth).sort((a,b)=>a[0].localeCompare(b[0])).map(([month, count]) => `
+          <tr>
+            <td style="color:var(--muted)">${month}</td>
+            <td><strong>${count}</strong></td>
+            <td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(count/maxMonth*100)}%"></div></div></div></td>
+          </tr>`).join('')}
+      </tbody></table>
+    </div>
+
+    <!-- Par semaine -->
+    <div class="table-card">
+      <div class="table-header"><div class="table-title">Évolution par semaine</div></div>
+      <table><thead><tr><th>Semaine</th><th>Scans</th><th>Activité</th></tr></thead>
+      <tbody>
+        ${Object.entries(byWeek).sort((a,b)=>a[0].localeCompare(b[0])).map(([week, count]) => `
+          <tr>
+            <td style="color:var(--muted)">${week}</td>
+            <td><strong>${count}</strong></td>
+            <td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(count/maxWeek*100)}%"></div></div></div></td>
+          </tr>`).join('')}
+      </tbody></table>
+    </div>
+  `;
+
+  // Draw historical chart
+  const sortedDaysForChart = dates.map(d => {
+    const count = rows.filter(r => r.date === d).reduce((s,r) => s+Number(r.count), 0);
+    return [d, count];
+  });
+  const topCard = document.getElementById('chart-card');
+  if (topCard) topCard.style.display = '';
+  document.getElementById('btn-toggle-chart').style.display = '';
+  setTimeout(() => drawDayChart(sortedDaysForChart, rows.map(r => ({
+    _user_name: r.user,
+    date: r.date + 'T00:00:00',
+    action: r.action,
+    // expand rows by count for chart grouping
+    _count: r.count
+  })), users), 50);
+}
+
+function getWeekKey(d) {
+  const tmp = new Date(d);
+  tmp.setHours(0,0,0,0);
+  tmp.setDate(tmp.getDate() - tmp.getDay() + 1); // Monday
+  return fmt(tmp);
+}
+
+// ==================== TOAST ====================
+function toast(msg, error = false) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show' + (error ? ' error' : '');
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+init();
+</script>
+</body>
+</html>
