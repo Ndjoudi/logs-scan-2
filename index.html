@@ -724,6 +724,13 @@ const actionMap = {
   'replacer':     { label: 'replacer',      cls: 'replacer' },
 };
 
+function actionTag(a) {
+  if (!a) return '<span class="tag other">-</span>';
+  const m = actionMap[a.toLowerCase()];
+  if (m) return '<span class="tag ' + m.cls + '">' + m.label + '</span>';
+  return '<span class="tag other">' + a + '</span>';
+}
+
 // ==================== FILTERS ====================
 function getFilteredLogs() {
   let logs = state.allLogs;
@@ -1136,17 +1143,10 @@ async function majSheet() {
 
   toast('Envoi vers Supabase...');
   try {
-    // Delete existing rows for these dates first (upsert par date)
-    const datesStr = [...new Set(rows.map(r => r.date))].map(d => `"${d}"`).join(',');
-    await fetch(state.supabaseUrl + `/scans?date=in.(${datesStr})`, {
-      method: 'DELETE',
-      headers: sbHeaders(),
-    });
-
-    // Insert new rows
+    // Upsert rows (insert or update)
     const resp = await fetch(state.supabaseUrl + '/scans', {
       method: 'POST',
-      headers: { ...sbHeaders(), 'Prefer': 'return=minimal' },
+      headers: { ...sbHeaders(), 'Prefer': 'resolution=merge-duplicates,return=minimal' },
       body: JSON.stringify(rows),
     });
 
